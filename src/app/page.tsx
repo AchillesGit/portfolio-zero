@@ -1,23 +1,24 @@
-import { db } from "~/server/db";
+import { getServerSession } from "next-auth";
+import Images from "./_components/images";
+import { authOptions } from "~/server/db/auth/[...nextauth]";
 
-export const dynamic = "force-dynamic";
-
+/**
+ * Homepage for logged-in users only.
+ */
 export default async function HomePage() {
-  const images = await db.query.images.findMany({
-    orderBy: (model, { desc }) => desc(model.createdAt),
-    limit: 100,
-  });
+  const session = await getServerSession(authOptions);
 
   return (
     <main>
-      <div className="flex flex-wrap gap-4">
-        {images.map((image) => (
-          <div key={image.id} className="w-48">
-            <img src={image.url} alt="image" />
-            <div className="">{image.name}</div>
-          </div>
-        ))}
-      </div>
+      {!session && (
+        <div className="flex h-screen flex-col items-center justify-center">
+          <h1 className="text-2xl font-bold">Bitte anmelden</h1>
+          <p className="mt-4">
+            Sie sind nicht angemeldet. Bitte melden Sie sich an.
+          </p>
+        </div>
+      )}
+      {session && <Images />}
     </main>
   );
 }

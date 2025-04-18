@@ -3,6 +3,8 @@ import "~/styles/globals.css";
 import { type Metadata } from "next";
 import { Geist } from "next/font/google";
 import TopNav from "./_components/topnav";
+import type { ReactNode } from "react";
+import AuthProvider from "./api/auth/authprovider";
 
 export const metadata: Metadata = {
   title: "Portfolio Zero",
@@ -15,14 +17,14 @@ const geist = Geist({
   variable: "--font-geist-sans",
 });
 
-export default function RootLayout({
-  children,
-}: Readonly<{ children: React.ReactNode }>) {
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className={`${geist.variable}`}>
-      <body className="flex flex-col gap-4">
-        <TopNav />
-        {children}
+      <body className="flex min-h-screen flex-col gap-4">
+        <AuthProvider>
+          <TopNav />
+          {children}
+        </AuthProvider>
       </body>
     </html>
   );
